@@ -1,0 +1,39 @@
+services:
+  keycloak:
+    ports:
+      - 8080:8080
+    image: quay.io/keycloak/keycloak:25.0.2
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command:
+      - "start-dev"
+      - "--import-realm"
+    volumes:
+      - type: bind
+        source: ./realms
+        target: /opt/keycloak/data/import
+  implicit:
+    ports:
+      - 8081:80
+    image: nginx:1.27-alpine
+    volumes:
+      - type: bind
+        source: ./implicit-fe
+        target: /usr/share/nginx/html
+  standard:
+    ports:
+      - 8082:80
+    image: nginx:1.27-alpine
+    volumes:
+      - type: bind
+        source: ./standard-fe
+        target: /usr/share/nginx/html
+  pkce:
+    ports:
+      - 8083:80
+    image: nginx:1.27-alpine
+    volumes:
+      - type: bind
+        source: ./pkce-fe
+        target: /usr/share/nginx/html
